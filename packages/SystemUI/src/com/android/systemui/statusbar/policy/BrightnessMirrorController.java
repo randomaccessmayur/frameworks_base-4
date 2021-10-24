@@ -201,10 +201,7 @@ public class BrightnessMirrorController
                 Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL,
                 UserHandle.USER_CURRENT) != Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL;
         mIcon.setImageResource(automatic ?
-                R.drawable.ic_qs_brightness_auto_on :
-                R.drawable.ic_qs_brightness_auto_off);
-        mIcon.setBackgroundResource(automatic ?
-                R.drawable.bg_qs_brightness_auto_on :
-                R.drawable.bg_qs_brightness_auto_off);
+                com.android.systemui.R.drawable.ic_qs_brightness_auto_on_new :
+                com.android.systemui.R.drawable.ic_qs_brightness_auto_off_new);
     }
 }
