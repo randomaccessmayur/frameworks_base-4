@@ -33,6 +33,8 @@ import com.android.systemui.qs.customize.QSCustomizerController;
 import com.android.systemui.qs.dagger.QSScope;
 import com.android.systemui.qs.logging.QSLogger;
 import com.android.systemui.util.leak.RotationUtils;
+import com.android.systemui.settings.brightness.BrightnessMirrorHandler;
+import com.android.systemui.statusbar.policy.BrightnessMirrorController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +54,14 @@ public class QuickQSPanelController extends QSPanelControllerBase<QuickQSPanel> 
                 }
             };
 
+<<<<<<< HEAD
     private final boolean mUsingCollapsedLandscapeMedia;
+=======
+    // brightness is visible only in split shade
+    private final QuickQSBrightnessController mBrightnessController;
+    private final BrightnessMirrorHandler mBrightnessMirrorHandler;
+    private final FooterActionsController mFooterActionsController;
+>>>>>>> 7880f56de9a5 (Revert "Remove QQS brightness controller")
 
     @Inject
     QuickQSPanelController(QuickQSPanel view, QSTileHost qsTileHost,
@@ -61,11 +70,23 @@ public class QuickQSPanelController extends QSPanelControllerBase<QuickQSPanel> 
             @Named(QUICK_QS_PANEL) MediaHost mediaHost,
             @Named(QS_USING_COLLAPSED_LANDSCAPE_MEDIA) boolean usingCollapsedLandscapeMedia,
             MetricsLogger metricsLogger, UiEventLogger uiEventLogger, QSLogger qsLogger,
+<<<<<<< HEAD
             DumpManager dumpManager
     ) {
         super(view, qsTileHost, qsCustomizerController, usingMediaPlayer, mediaHost, metricsLogger,
                 uiEventLogger, qsLogger, dumpManager);
         mUsingCollapsedLandscapeMedia = usingCollapsedLandscapeMedia;
+=======
+            DumpManager dumpManager,
+            QuickQSBrightnessController quickQSBrightnessController,
+            @Named(QQS_FOOTER) FooterActionsController footerActionsController
+    ) {
+        super(view, qsTileHost, qsCustomizerController, usingMediaPlayer, mediaHost, metricsLogger,
+                uiEventLogger, qsLogger, dumpManager);
+        mBrightnessController = quickQSBrightnessController;
+        mBrightnessMirrorHandler = new BrightnessMirrorHandler(mBrightnessController);
+        mFooterActionsController = footerActionsController;
+>>>>>>> 7880f56de9a5 (Revert "Remove QQS brightness controller")
     }
 
     @Override
@@ -74,6 +95,7 @@ public class QuickQSPanelController extends QSPanelControllerBase<QuickQSPanel> 
         updateMediaExpansion();
         mMediaHost.setShowsOnlyActiveMedia(true);
         mMediaHost.init(MediaHierarchyManager.LOCATION_QQS);
+<<<<<<< HEAD
     }
 
     private void updateMediaExpansion() {
@@ -90,28 +112,60 @@ public class QuickQSPanelController extends QSPanelControllerBase<QuickQSPanel> 
     @VisibleForTesting
     protected int getRotation() {
         return RotationUtils.getRotation(getContext());
+=======
+        mBrightnessController.init(mShouldUseSplitNotificationShade);
+        mFooterActionsController.init();
+        mFooterActionsController.refreshVisibility(mShouldUseSplitNotificationShade);
+>>>>>>> 7880f56de9a5 (Revert "Remove QQS brightness controller")
     }
 
     @Override
     protected void onViewAttached() {
         super.onViewAttached();
         mView.addOnConfigurationChangedListener(mOnConfigurationChangedListener);
+        mBrightnessMirrorHandler.onQsPanelAttached();
     }
 
     @Override
     protected void onViewDetached() {
         super.onViewDetached();
         mView.removeOnConfigurationChangedListener(mOnConfigurationChangedListener);
+        mBrightnessMirrorHandler.onQsPanelDettached();
     }
 
+<<<<<<< HEAD
+=======
+    @Override
+    void setListening(boolean listening) {
+        super.setListening(listening);
+        mBrightnessController.setListening(listening);
+        mFooterActionsController.setListening(listening);
+    }
+
+    public boolean isListening() {
+        return mView.isListening();
+    }
+
+>>>>>>> 7880f56de9a5 (Revert "Remove QQS brightness controller")
     private void setMaxTiles(int parseNumTiles) {
         mView.setMaxTiles(parseNumTiles);
         setTiles();
     }
 
     @Override
+    public void refreshAllTiles() {
+        mBrightnessController.checkRestrictionAndSetEnabled();
+        super.refreshAllTiles();
+    }
+
+    @Override
     protected void onConfigurationChanged() {
+<<<<<<< HEAD
         updateMediaExpansion();
+=======
+        mBrightnessController.refreshVisibility(mShouldUseSplitNotificationShade);
+        mFooterActionsController.refreshVisibility(mShouldUseSplitNotificationShade);
+>>>>>>> 7880f56de9a5 (Revert "Remove QQS brightness controller")
     }
 
     @Override
@@ -133,5 +187,9 @@ public class QuickQSPanelController extends QSPanelControllerBase<QuickQSPanel> 
 
     public int getNumQuickTiles() {
         return mView.getNumQuickTiles();
+    }
+
+    public void setBrightnessMirror(BrightnessMirrorController brightnessMirrorController) {
+        mBrightnessMirrorHandler.setController(brightnessMirrorController);
     }
 }

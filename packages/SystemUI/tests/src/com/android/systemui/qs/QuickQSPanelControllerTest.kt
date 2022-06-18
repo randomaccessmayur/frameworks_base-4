@@ -68,6 +68,8 @@ class QuickQSPanelControllerTest : SysuiTestCase() {
     private lateinit var tileLayout: TileLayout
     @Mock
     private lateinit var tileView: QSTileView
+    @Mock
+    private lateinit var quickQsBrightnessController: QuickQSBrightnessController
     @Captor
     private lateinit var captor: ArgumentCaptor<QSPanel.OnConfigurationChangedListener>
 
@@ -93,7 +95,8 @@ class QuickQSPanelControllerTest : SysuiTestCase() {
                 metricsLogger,
                 uiEventLogger,
                 qsLogger,
-                dumpManager
+                dumpManager,
+                quickQsBrightnessController
         )
 
         controller.init()
@@ -125,7 +128,7 @@ class QuickQSPanelControllerTest : SysuiTestCase() {
     }
 
     @Test
-    fun testMediaExpansionUpdatedWhenConfigurationChanged() {
+    fun testBrightnessAndMediaExpansionUpdatedWhenConfigurationChanged() {
         // times(2) because both controller and base controller are registering their listeners
         verify(quickQSPanel, times(2)).addOnConfigurationChangedListener(captor.capture())
 
@@ -161,6 +164,8 @@ class QuickQSPanelControllerTest : SysuiTestCase() {
 
         fun setRotation(newRotation: Int) {
             rotation = newRotation
+
+        verify(quickQsBrightnessController).refreshVisibility(anyBoolean())
         }
     }
 }
